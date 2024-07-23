@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - pip install requests
+  pre_build:
+    commands:
+      - echo Pre-build phase...
+  build:
+    commands:
+      - echo Build phase...
+      - python script1.py
+      - python script2.py
+      - python script3.py
+  post_build:
+    commands:
+      - echo Post-build phase...
+      - aws s3 cp script1.py s3://code-buid-automation/script1.py
+      - aws s3 cp script2.py s3://code-buid-automation/script2.py
+      - aws s3 cp script3.py s3://code-buid-automation/script3.py
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
