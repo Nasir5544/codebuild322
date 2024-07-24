@@ -19,7 +19,7 @@ phases:
     commands:
       - echo Post-build phase...
       - echo "Uploading all files except script2.py..."
-      - find . -type f ! -name 'script2.py' -print | xargs -I {} aws s3 cp {} s3://glue-demo-222/{}
+      - find . -type f ! -name 'script2.py' ! -name 'buildspec.yml' ! -name '.git/*' -print | xargs -I {} bash -c 'aws s3 cp {} s3://glue-demo-222/$(basename {})'
 
 artifacts:
   files:
