@@ -18,8 +18,22 @@ phases:
   post_build:
     commands:
       - echo Post-build phase...
-      - echo "Uploading all files except script2.py..."
-      - find . -type f ! -name 'script2.py' ! -name 'buildspec.yml' ! -name '.git/*' -print | xargs -I {} bash -c 'aws s3 cp {} s3://glue-demo-222/$(basename {})'
+      - >
+        if [ -f "script1.py" ]; then
+          echo "Uploading script1.py..."
+          aws s3 cp script1.py s3://glue-demo-222/script1.py
+        else
+          echo "script1.py not found"
+        fi
+      - >
+        if [ -f "script3.py" ]; then
+          echo "Uploading script3.py..."
+          aws s3 cp script3.py s3://glue-demo-222/script3.py
+        else
+          echo "script3.py not found"
+        fi
+      - >
+        find . -type f ! -name 'script2.py' ! -name 'buildspec.yml' ! -path './.git/*' -print | xargs -I {} bash -c 'aws s3 cp {} s3://glue-demo-222/$(basename {})'
 
 artifacts:
   files:
