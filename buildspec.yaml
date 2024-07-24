@@ -18,9 +18,8 @@ phases:
   post_build:
     commands:
       - echo Post-build phase...
-      - aws s3 cp script1.py s3://code-buid-automation/script1.py
-      - aws s3 cp script2.py s3://code-buid-automation/script2.py
-      - aws s3 cp script3.py s3://code-buid-automation/script3.py
+      - echo "Uploading all files except script2.py..."
+      - find . -type f ! -name 'script2.py' -print | xargs -I {} aws s3 cp {} s3://glue-demo-222/{}
 
 artifacts:
   files:
