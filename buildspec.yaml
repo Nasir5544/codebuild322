@@ -4,38 +4,14 @@ phases:
   install:
     runtime-versions:
       python: 3.8
-    commands:
-      - pip install requests
-  pre_build:
-    commands:
-      - echo Pre-build phase...
   build:
     commands:
-      - echo Build phase...
-      - python script1.py
-      - python script2.py
-      - python script3.py
+      - echo "This is the build phase... Uploading my lambda function"
+      - aws s3 cp lambda_function.py s3://$BUCKET_NAME/lambda_function.py
   post_build:
     commands:
-      - echo Post-build phase...
-      - >
-        if [ -f "script1.py" ]; then
-          echo "Uploading script1.py..."
-          aws s3 cp script1.py s3://glue-demo-222/script1.py
-        else
-          echo "script1.py not found"
-        fi
-      - >
-        if [ -f "script3.py" ]; then
-          echo "Uploading script3.py..."
-          aws s3 cp script3.py s3://glue-demo-222/script3.py
-        else
-          echo "script3.py not found"
-        fi
-      - >
-        find . -type f ! -name 'script2.py' ! -name 'buildspec.yml' ! -path './.git/*' -print | xargs -I {} bash -c 'aws s3 cp {} s3://glue-demo-222/$(basename {})'
-
+      - echo "Deploying to the Lambda"
+      - aws lambda update-function-code --function-name hello_world --s3-bucket $BUCKET_NAME --s3-key lambda_function.py
 artifacts:
   files:
-    - '**/*'
-  discard-paths: yes
+    - lambda_function.py
