@@ -6,12 +6,14 @@ phases:
       python: 3.8
   build:
     commands:
-      - echo "This is the build phase... Uploading my lambda function"
-      - aws s3 cp lambda_function.py s3://code-buid-automation/lambda_function.py
+      - echo "This is the build phase... Zipping my lambda function"
+      - zip -r deployment_package.zip lambda_function.py
+      - echo "Uploading to S3"
+      - aws s3 cp deployment_package.zip s3://code-buid-automation/deployment_package.zip
   post_build:
     commands:
       - echo "Deploying to the Lambda"
-      - aws lambda update-function-code --function-name hello_world --s3-bucket code-buid-automation --s3-key lambda_function.py
+      - aws lambda update-function-code --function-name hello_world --s3-bucket code-buid-automation --s3-key deployment_package.zip
 artifacts:
   files:
-    - lambda_function.py
+    - deployment_package.zip
